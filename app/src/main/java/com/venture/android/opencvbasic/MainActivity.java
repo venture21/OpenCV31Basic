@@ -180,11 +180,15 @@ public class MainActivity extends Activity implements CameraBridgeViewBase.CvCam
 
     @Override
     public Mat onCameraFrame(CameraBridgeViewBase.CvCameraViewFrame inputFrame) {
+        if(img_result != null)
+            img_result.release();
 
         img_input = inputFrame.rgba();
         img_result = new Mat();
 
         convertNativeLib(img_input.getNativeObjAddr(), img_result.getNativeObjAddr());
+
+        img_input.release();
 
         return img_result;
     }

@@ -9,7 +9,9 @@ extern "C" {
 
 int process(Mat img_input, Mat &img_result)
 {
-    cvtColor( img_input, img_result, CV_RGBA2GRAY);
+    Mat temp;
+    cvtColor( img_input, temp, CV_RGBA2GRAY);
+    threshold(temp,img_result,100,255,THRESH_OTSU);
 
     return(0);
 }
@@ -22,6 +24,8 @@ Java_com_venture_android_opencvbasic_MainActivity_convertNativeLib(JNIEnv*, jobj
 
     int conv = process(img_input, img_result);
     int ret = (jint) conv;
+
+
 
     return ret;
 }
