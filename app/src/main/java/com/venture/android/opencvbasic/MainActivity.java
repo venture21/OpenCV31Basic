@@ -1,19 +1,27 @@
 package com.venture.android.opencvbasic;
 
+import android.Manifest;
 import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.SurfaceView;
 import android.view.WindowManager;
+import android.widget.ImageView;
 
 import org.opencv.android.BaseLoaderCallback;
 import org.opencv.android.CameraBridgeViewBase;
 import org.opencv.android.LoaderCallbackInterface;
 import org.opencv.android.OpenCVLoader;
+import org.opencv.android.Utils;
 import org.opencv.core.Mat;
 
 
@@ -23,7 +31,21 @@ public class MainActivity extends Activity implements CameraBridgeViewBase.CvCam
     private static final String TAG = "opencv";
     private CameraBridgeViewBase mOpenCvCameraView;
 
+    // Add Variable
+    private boolean mIsJavaCamera = true;
+    private MenuItem mItemSwitchCamera = null;
+
+    //Add ImageView
+    ImageView DrawArea;
+
+    public native int testProcess();
     public native int convertNativeLib(long matAddrInput, long matAddrResult);
+
+    // Add Function
+    public native int convertNativeGray(long matAddrRgba, long matAddrGray);
+
+    private Mat mRgba;
+
 
     static final int PERMISSION_REQUEST_CODE = 1;
     String[] PERMISSIONS  = {"android.permission.CAMERA"};
@@ -31,6 +53,7 @@ public class MainActivity extends Activity implements CameraBridgeViewBase.CvCam
     static {
         System.loadLibrary("opencv_java3");
         System.loadLibrary("native-lib");
+        System.loadLibrary("nativegray");
     }
 
     private boolean hasPermissions(String[] permissions) {
@@ -119,12 +142,26 @@ public class MainActivity extends Activity implements CameraBridgeViewBase.CvCam
         myDialog.show();
     }
 
+    //private void
+
+    //Button btnProcess;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        // Remove 07-04-11
+        //setContentView(R.layout.activity_main);
+
+        // btnProcess
+//        btnProcess = (Button) findViewById(R.id.btnProcess);
+//        btnProcess.setOnClickListener(clickListener);
 
         getWindow().addFlags( WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+
+        // Add 07-04-11
+        setContentView(R.layout.activity_main);
+        DrawArea = (ImageView) findViewById(R.id.imageview);
+        ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA}, 0);
+
 
         if (!hasPermissions(PERMISSIONS)) { //퍼미션 허가를 했었는지 여부를 확인
             requestNecessaryPermissions(PERMISSIONS);//퍼미션 허가안되어 있다면 사용자에게 요청
@@ -137,7 +174,24 @@ public class MainActivity extends Activity implements CameraBridgeViewBase.CvCam
         mOpenCvCameraView.setCvCameraViewListener(this);
         mOpenCvCameraView.setCameraIndex(0); // front-camera(1),  back-camera(0)
         mLoaderCallback.onManagerConnected(LoaderCallbackInterface.SUCCESS);
+
+
     }
+
+//    private View.OnClickListener clickListener = new View.OnClickListener() {
+//
+//        @Override
+//        public void onClick(View view) {
+//            switch(view.getId()){
+//                case R.id.btnProcess:
+//                    int ret;
+//                    ret = testProcess();
+//                    Log.i("testProcess","ret="+ret);
+//                    break;
+//            }
+//
+//        }
+//    };
 
     @Override
     public void onPause()
@@ -182,15 +236,35 @@ public class MainActivity extends Activity implements CameraBridgeViewBase.CvCam
     public Mat onCameraFrame(CameraBridgeViewBase.CvCameraViewFrame inputFrame) {
         if(img_result != null)
             img_result.release();
+        if (inputFrame.rgba() != null) {
+            img_input = inputFrame.rgba();
+            img_result = new Mat();
+            convertNativeGray(img_input.getNativeObjAddr(), img_result.getNativeObjAddr());
+            //img_input.release();
+        }
 
-        img_input = inputFrame.rgba();
-        img_result = new Mat();
-
-        convertNativeLib(img_input.getNativeObjAddr(), img_result.getNativeObjAddr());
-
-        img_input.release();
+        new Thread()
+        {
+            public void run()
+            {
+                Message msg = handler.obtainMessage();
+                handler.sendMessage(msg);
+            }
+        }.start();
 
         return img_result;
     }
 
+
+    final Handler handler = new Handler()
+    {
+        public void handleMessage(Message msg)
+        {
+            //Log.i("Handle","img_result_cols="+img_result.cols()+"rows="+img_result.rows());
+            Bitmap bmp = Bitmap.createBitmap(img_input.cols(), img_input.rows(),
+                    Bitmap.Config.ARGB_8888);
+            Utils.matToBitmap(img_input, bmp);
+            DrawArea.setImageBitmap(bmp);
+        }
+    };
 }
