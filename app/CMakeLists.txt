@@ -20,7 +20,7 @@ include_directories(${pathOpenCv}/sdk/native/jni/include)
 # Gradle automatically packages shared libraries with your APK.
 
 add_library( native-lib SHARED src/main/cpp/native-lib.cpp )
-add_library( nativegray SHARED src/main/cpp/nativegray.cpp )
+add_library( native-gray SHARED src/main/cpp/native-gray.cpp )
 add_library( lib_opencv SHARED IMPORTED )
 
 set_target_properties(lib_opencv PROPERTIES IMPORTED_LOCATION ${pathProject}/app/src/main/JniLibs/${ANDROID_ABI}/libopencv_java3.so)
@@ -45,7 +45,7 @@ find_library( # Sets the name of the path variable.
 
 target_link_libraries( # Specifies the target library.
                        native-lib
-                       nativegray
+                       native-gray
 
 
                        # Links the target library to the log library

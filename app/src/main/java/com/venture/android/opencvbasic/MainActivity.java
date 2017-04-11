@@ -38,10 +38,8 @@ public class MainActivity extends Activity implements CameraBridgeViewBase.CvCam
     //Add ImageView
     ImageView DrawArea;
 
-    public native int testProcess();
+    //public native int testProcess();
     public native int convertNativeLib(long matAddrInput, long matAddrResult);
-
-    // Add Function
     public native int convertNativeGray(long matAddrRgba, long matAddrGray);
 
     private Mat mRgba;
@@ -53,7 +51,7 @@ public class MainActivity extends Activity implements CameraBridgeViewBase.CvCam
     static {
         System.loadLibrary("opencv_java3");
         System.loadLibrary("native-lib");
-        System.loadLibrary("nativegray");
+        System.loadLibrary("native-gray");
     }
 
     private boolean hasPermissions(String[] permissions) {

@@ -17,16 +17,6 @@ int process(Mat img_input, Mat &img_result)
     return(0);
 }
 
-//int toGray(Mat img, Mat& gray)
-//{
-//    cvtColor(img, gray, CV_RGBA2GRAY);
-//
-//    if (gray.rows == img.rows && gray.cols == img.cols)
-//    {
-//        return (1);
-//    }
-//    return(0);
-//}
 
 JNIEXPORT jint JNICALL
 Java_com_venture_android_opencvbasic_MainActivity_convertNativeLib(JNIEnv*, jobject, jlong addrInput, jlong addrResult) {
@@ -38,23 +28,6 @@ Java_com_venture_android_opencvbasic_MainActivity_convertNativeLib(JNIEnv*, jobj
     int ret = (jint) conv;
     return ret;
 }
-
-//JNIEXPORT jint JNICALL
-//Java_com_venture_android_opencvbasic_MainActivity_convertNativeGray(JNIEnv*, jobject, jlong addrRgba, jlong addrGray) {
-//
-//    Mat& mRgb = *(Mat*)addrRgba;
-//    Mat& mGray = *(Mat*)addrGray;
-//
-//    int conv;
-//    jint retVal;
-//
-//    conv = toGray(mRgb, mGray);
-//
-//    retVal = (jint)conv;
-//
-//    return retVal;
-//
-//}
 
 
 }
