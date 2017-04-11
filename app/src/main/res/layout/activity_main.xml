@@ -6,7 +6,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent" >
 
-    <org.opencv.android.JavaCameraView
+    <!--<org.opencv.android.JavaCameraView-->
+    <com.venture.android.opencvbasic.PortraitCameraView
         android:id="@+id/activity_surface_view"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"

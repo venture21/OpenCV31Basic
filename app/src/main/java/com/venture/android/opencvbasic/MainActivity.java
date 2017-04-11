@@ -51,7 +51,7 @@ public class MainActivity extends Activity implements CameraBridgeViewBase.CvCam
     static {
         System.loadLibrary("opencv_java3");
         System.loadLibrary("native-lib");
-        System.loadLibrary("native-gray");
+
     }
 
     private boolean hasPermissions(String[] permissions) {
@@ -237,7 +237,7 @@ public class MainActivity extends Activity implements CameraBridgeViewBase.CvCam
         if (inputFrame.rgba() != null) {
             img_input = inputFrame.rgba();
             img_result = new Mat();
-            convertNativeGray(img_input.getNativeObjAddr(), img_result.getNativeObjAddr());
+            convertNativeLib(img_input.getNativeObjAddr(), img_result.getNativeObjAddr());
             //img_input.release();
         }
 
